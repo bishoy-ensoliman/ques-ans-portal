@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Drillers Eye{% endblock title %}</title>
+    {% load static %}
+
+    <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'questions/stylesheets/w3.css' %}"/>
+    <style>
+        body {
+            counter-reset: step;
+        }
+
+        h3::before {
+            counter-increment: step;
+            content: "Step " counter(step) ": ";
+        }
+
+        body {
+            background-color: #e3e3e3;
+        }
+
+        div {
+            background-color: white;
+        }
+
+        pre {
+            font-family: inherit;
+            white-space: pre-wrap;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+{% load myfilters %}
+<div id="navbar" class="w3-topbar w3-card-2 w3-medium">
+    <div class="w3-bar  ">
+        <!--<div class="w3-dropdown-click w3-left w3-mobile">
+            <button class="w3-button w3-hover-navy" onclick="catagoreiesShow('user info')">
+                Catagories <i class="fa fa-angle-down"></i>
+            </button>
+            <div id="catagories" class="w3-dropdown-content w3-bar-block w3-card">
+                <a class="w3-button w3-hover-navy w3-block" href="#">M/LWD</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Wireline</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Casing</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">SDL</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Coiled Tubing</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Well Testing</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Cementing</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Completions</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">DD</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Mud</a>
+                <a class="w3-button w3-hover-navy w3-block" href="#">Fracturing</a>
+            </div>
+        </div> -->
+        <a href="{% url 'questions:index' %}" class="w3-bar-item w3-button w3-hover-navy w3-mobile">Home</a>
+        <a href="{% url 'library:index' %}" class="w3-bar-item w3-button w3-hover-navy w3-mobile">Library</a>
+        <a href="{% url 'handover:index' %}" class="w3-bar-item w3-button w3-hover-navy w3-mobile">Hand-over Reports</a>
+        <a href="{% url 'forum:index' %}" class="w3-bar-item w3-button w3-hover-navy w3-mobile">Forum</a>
+        <a href="{% url 'contact:contact-us' %}" class="w3-bar-item w3-button w3-hover-navy w3-mobile">Contact</a>
+        <a href="{% url 'contact:download-app' %}" class="w3-bar-item w3-button w3-hover-navy w3-mobile">Download App</a>
+        <form action="" method="get">
+            <button type="submit" class="w3-bar-item w3-button w3-navy w3-right w3-mobile"><i class="fa fa-search"></i>
+            </button>
+            <input type="text" class="w3-bar-item w3-input w3-right w3-mobile "
+                   name='q' placeholder="Search..">
+        </form>
+
+        <div class="w3-dropdown-click w3-right w3-mobile">
+            {% if not user.is_authenticated  and not '/accounts/login/' in request.path %}
+                <button class="w3-button w3-hover-navy" onclick="signInFormShow('loginform')">
+                    Login/Sign Up
+                </button>
+                <div id="loginform" class="w3-dropdown-content w3-bar-block w3-card">
+                    <form class="w3-container w3-margin" method="post"
+                          action="{% url 'login' %}?next={{ request.path }}">
+                        {% csrf_token %}
+                        <div>
+                            <label for="id_username"><label for="id_username">Username:</label></label>
+                            <input type="text" name="username" autofocus="" maxlength="254" class="w3-input"
+                                   required="" id="id_username">
+                        </div>
+                        <div>
+                            <label for="id_password"><label for="id_password">Password:</label></label>
+                            <input type="password" name="password" class="w3-input" required="" id="id_password">
+                        </div>
+
+                        <div class="w3-container w3-cell-row w3-margin-top">
+                            <input class="w3-cell w3-button w3-hover-navy" type="submit" value="login"/>
+                            <a class="w3-cell w3-cell-middle w3-padding" href="{% url 'password_reset' %}"> Lost
+                                password?</a>
+                        </div>
+                    </form>
+                    <a class="w3-cell w3-button w3-hover-navy" href="{% url 'accounts:signup' %}">New member?
+                        Signup
+                        <i class="fa fa-arrow-up"></i></a>
+                </div>
+
+
+            {% else %}
+                <button class="w3-button w3-hover-navy" onclick="signInFormShow('user info')">
+                    {{ user.get_full_name }}
+                </button>
+                <div id="loginform" class="w3-dropdown-content w3-bar-block w3-card">
+                    <a class="w3-button w3-hover-navy" style="width: 100%" href="{% url 'accounts:profile' %}">My
+                        Profile</a>
+                    <a href="{% url 'accounts:myquestions' %}" class=" w3-hover-navy w3-button w3-block w3-left">My
+                        Topics
+                        &nbsp;&nbsp;<span
+                                class="w3-right w3-tag w3-navy">{{ user.questions.all|length }}</span></a>
+                    <a href="{% url 'accounts:myanswers' %}" class=" w3-hover-navy w3-button w3-block w3-left">My
+                        Solutions
+                        &nbsp;&nbsp;<span
+                                class="w3-right w3-tag w3-navy">{{ user.answers.all|length }}</span></a>
+                    <a class="w3-button w3-hover-navy w3-left" href="{% url 'logout' %}?next={{ request.path }}">Log
+                        out</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block body %}
+{% endblock body %}
+</body>
+
+<script>
+
+
+    function signInFormShow() {
+        var x = document.getElementById("loginform");
+        if (x.className.indexOf("w3-show") === -1) {
+            x.className += " w3-show";
+        } else {
+            x.className = x.className.replace(" w3-show", "");
+        }
+    }
+
+    function catagoreiesShow() {
+        var x = document.getElementById("catagories");
+        if (x.className.indexOf("w3-show") === -1) {
+            x.className += " w3-show";
+        } else {
+            x.className = x.className.replace(" w3-show", "");
+        }
+    }
+
+    var password = document.getElementById("signup-psw")
+        , confirm_password = document.getElementById("signup-psw-repeat");
+
+    function validatePassword() {
+        if (password.value !== confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+
+</script>
+</html>

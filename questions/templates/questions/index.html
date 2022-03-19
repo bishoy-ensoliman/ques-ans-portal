@@ -1,0 +1,57 @@
+{% extends 'questions/base_html.html' %}
+{% block body %}
+
+    {% if user.is_authenticated %}
+        <span class="w3-container w3-block  " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <a class="w3-button w3-center w3-navy w3-margin w3-right"
+           href="{% url 'questions:add_question' %}">Add A Topic</a>
+        </span>
+    {% endif %}
+    {% if latest_question_list %}
+        {% for question in latest_question_list %}
+            <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+                <div class="w3-container w3-left w3-margin-top">
+                <span class="w3-bar-block  w3-mobile" title="Approved?"><i
+                        class="fa fa-check-circle w3-xxxlarge
+                        {% if not question.answered %}w3-text-light-grey{% else %}
+                        w3-text-green {% endif %}
+                            "></i></span>
+                </div>
+                <a style="text-decoration:none" href="{% url 'questions:detail' question.pk %}">
+                    <h1 class="w3-xlarge">{{ question.title }}</h1>
+                </a>
+                <p>
+                    {{ question.description|truncatechars:150 }}
+                </p>
+                <a href="{% url 'questions:detail' question.pk %}#comments"
+                   class="w3-left w3-text-blue-grey w3-button">{{ question.q_comments.all|length }}
+                    comments </a>
+                <a href="{% url 'questions:detail' question.pk %}#answers"
+                   class="w3-left w3-text-blue-grey w3-button">{{ question.answers.all|length }} Solutions </a>
+                <a href="{% url 'accounts:view_profile' question.author.pk %}"
+                   class="w3-right w3-text-blue-grey w3-button">by {{ question.author.get_full_name }}</a>
+            </div>
+        {% endfor %}
+        {% if is_paginated %}
+            <span class=" pagination w3-container w3-block" style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+                <span class="page-links w3-center">
+                    {% if page_obj.has_previous %}
+                        <a class="w3-button w3-center w3-navy w3-margin w3-left"
+                           href="{% url 'questions:index' %}?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a class="w3-button w3-center w3-navy w3-margin w3-right"
+                           href="{% url 'questions:index' %}?page={{ page_obj.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+            </span>
+        {% endif %}
+
+    {% else %}
+        <div class="w3-container w3-card w3-margin-top w3-mobile w3-text-light-grey" style="max-width: 60em;  margin-left: auto;
+    margin-right: auto; margin-top:auto; height: 50%"><p class="w3-xxxlarge">No topics are available.</p></div>
+    {% endif %}
+{% endblock body %}

@@ -1,0 +1,22 @@
+{% extends 'questions/base_html.html' %}
+
+{% block title %}Add Topic{% endblock title %}
+{% load myfilters %}
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <h2>Add A Topic:</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.title.errors }}
+            <label class="w3-margin" for={{ form.title.id_for_label }}>{{ form.title.label_tag }}</label>
+            {{ form.title|addclass:'w3-input w3-margin-bottom' }}
+            {{ form.description.errors }}
+            <label class="w3-margin" for={{ form.description.id_for_label }}>{{ form.description.label_tag }}</label>
+            {{ form.description|addclass:'w3-input w3-margin-bottom' }}
+
+            <button class="w3-button w3-hover-navy " type="submit">Add Topic</button>
+        </form>
+    </div>
+
+{% endblock body %}

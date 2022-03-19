@@ -1,0 +1,42 @@
+{% extends  'questions/base_html.html' %}
+{% load humanize %}
+{% load myfilters %}
+{% block title %}{{ post.title }}{% endblock title %}
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <h1 class="w3-xlarge"> {{ post.title }}</h1>
+        <hr>
+        <pre class="w3-margin">{{ post.description }}</pre>
+        <hr>
+        <span class="w3-left w3-text-blue-grey">Submitted {{ post.pub_time|naturaltime }} </span>
+        <a href="#" class="w3-right w3-text-blue-grey w3-button">by {{ post.author.get_full_name }}</a><br>
+        <div class="w3-container">
+            <h2 id="comments" class="w3-large">Comments</h2>
+            {% for comment in post.p_comments.all reversed %}
+                <div>
+                    <div class="w3-text-blue-grey w3-padding-small w3-small ">{{ comment.author.get_full_name }}</div>
+                    <p class=" w3-small "
+                       style="margin-top: 0;margin-bottom: 0; text-indent: 3em;">{{ comment.text }}
+                    </p>
+                    <hr style="margin-top: 0;margin-bottom: 0;">
+                </div>
+            {% empty %}
+                <div class="w3-container w3-margin-top  w3-text-light-grey"><p class="w3-xxlarge">No Comments so
+                    far..</p></div>
+            {% endfor %}
+            {% if user.is_authenticated %}
+                <form action="{% url  'forum:p_comment' post.pk %}" method="post" id="post-comment-form">
+                    {% csrf_token %}
+                    <textarea rows="2" name="text"
+                              class="w3-input w3-small w3-margin-top w3-border w3-round-small "
+                              placeholder="Insert Comment..." style="resize: none" id="id_text" maxlength="400"
+                              required></textarea>
+                    <button class="w3-button  w3-right w3-hover-navy w3-small" type="submit" value="Add Comment">Add
+                        Comment
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

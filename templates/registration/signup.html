@@ -1,0 +1,24 @@
+{% extends 'questions/base_html.html' %}
+
+{% block title %}Sign Up{% endblock %}
+{% load myfilters %}
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <h2>Sign up</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+                {{ field.errors }}
+                <label class="w3-margin" for={{ field.id_for_label }}>{{ field.label_tag }}</label>
+
+                {% ifequal field.name 'country' %}
+                    {{ field|addclass:'w3-input w3-margin-bottom w3-border w3-round' }}
+                {% else %}
+                    {{ field|addclass:'w3-input w3-margin-bottom' }}
+                {% endifequal %}
+            {% endfor %}
+            <button class="w3-button w3-hover-navy w3-right w3-xlarge" type="submit">Sign up</button>
+        </form>
+    </div>
+{% endblock body %}

@@ -1,0 +1,24 @@
+{% extends 'questions/base_html.html' %}
+{% load myfilters %}
+{% block title %}Contact us{% endblock title %}
+
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <h2>Contact Admin:</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.sender_email.errors }}
+            <label class="w3-margin" for={{ form.sender_email.id_for_label }}>{{ form.sender_email.label_tag }}</label>
+            {{ form.sender_email|addclass:'w3-input w3-margin-bottom' }}
+            {{ form.subject.errors }}
+            <label class="w3-margin" for={{ form.subject.id_for_label }}>{{ form.subject.label_tag }}</label>
+            {{ form.subject|addclass:'w3-input w3-margin-bottom' }}
+            {{ form.body.errors }}
+            <label class="w3-margin" for={{ form.body.id_for_label }}>{{ form.body.label_tag }}</label>
+            {{ form.body|addclass:'w3-input w3-margin-bottom' }}
+
+            <button class="w3-button w3-hover-navy " type="submit">Send Email</button>
+        </form>
+    </div>
+{% endblock body %}

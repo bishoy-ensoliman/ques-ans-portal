@@ -1,0 +1,29 @@
+{% extends 'questions/base_html.html' %}
+{% load myfilters %}
+{% block title %}Add A Report{% endblock title %}
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="w3-padding-large w3-container">
+                {{ form.title.errors }}
+                <label class="w3-margin w3-large " for={{ form.title.id_for_label }}>{{ form.title.label_tag }}</label>
+                {{ form.title|addclass:'w3-input w3-margin-bottom' }}
+                {{ form.serial_num.errors }}
+                <label class="w3-margin w3-large " for={{ form.serial_num.id_for_label }}>Serial Number:</label>
+                {{ form.serial_num|addclass:'w3-input w3-margin-bottom' }}
+
+                {{ form.file.errors }}
+
+                <label class="w3-margin w3-large" for={{ form.file.id_for_label }}>{{ form.file.label_tag }}
+                </label>
+                {{ form.file|addclass:'w3-input w3-margin-bottom' }}
+            </div>
+            <button class="w3-button w3-hover-navy " type="submit"><i class="fa fa-cloud-upload"></i> Upload Handover
+                Report
+            </button>
+        </form>
+    </div>
+{% endblock body %}

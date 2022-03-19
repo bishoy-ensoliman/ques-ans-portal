@@ -1,0 +1,10 @@
+from django.urls import path
+from . import views
+
+app_name = 'library'
+
+urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
+    path('add_document', views.add_document, name='add_document'),
+    path('download', views.download, name='download')
+]

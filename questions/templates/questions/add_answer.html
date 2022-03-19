@@ -1,0 +1,98 @@
+{% extends 'questions/base_html.html' %}
+
+{% block title %}Add A Solution{% endblock title %}
+{% load myfilters %}
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        <h2>Add A Solution:</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.description.errors }}
+            <label class="w3-margin" for={{ form.description.id_for_label }}>{{ form.description.label_tag }}</label>
+            {{ form.description|addclass:'w3-input w3-margin-bottom' }}
+            {{ formset.management_form }}
+            <h2 class="w3-margin-top">Steps:</h2>
+
+            {% for stepform in formset.forms %}
+                <div class="form-row">
+                    <h3 class="w3-margin-top"></h3>
+                    {{ stepform.brief.errors }}
+                    <label class="w3-margin"
+                           for={{ stepform.brief.id_for_label }}>{{ stepform.brief.label_tag }}</label>
+                    {{ stepform.brief|addclass:'w3-input w3-margin-bottom' }}
+
+
+                    {{ stepform.in_detail.errors }}
+                    <label class="w3-margin"
+                           for={{ stepform.in_detail.id_for_label }}>{{ stepform.in_detail.label_tag }}</label>
+                    {{ stepform.in_detail|addclass:'w3-input w3-margin-bottom' }}
+                    {% if stepform.brief.value and forloop.counter != last_form_counter %}
+                        <span class="remove-form-row w3-button w3-navy w3-right"><i
+                                class="fa fa-minus" aria-hidden="true"></i></span>
+                    {% else %}
+                        <span class="add-form-row w3-button w3-navy w3-right"><i
+                                class="fa fa-plus" aria-hidden="true"></i></span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button class="w3-button w3-hover-navy w3-margin-top" type="submit">Add Solution</button>
+
+        </form>
+    </div>
+
+    <script type='text/javascript'>
+        function updateElementIndex(el, prefix, ndx) {
+            var id_regex = new RegExp('(' + prefix + '-\\d+)');
+            var replacement = prefix + '-' + ndx;
+            if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+            if (el.id) el.id = el.id.replace(id_regex, replacement);
+            if (el.name) el.name = el.name.replace(id_regex, replacement);
+        }
+
+        function cloneMore(selector, prefix) {
+            var newElement = $(selector).clone(true);
+            var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+            newElement.find(':input').each(function () {
+                var name = $(this).attr('name').replace('-' + (total - 1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+            });
+            total++;
+            $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+            $(selector).after(newElement);
+            var conditionRow = $('.form-row:not(:last)');
+            conditionRow.find('.add-form-row')
+                .removeClass('add-form-row').addClass('remove-form-row')
+                .html('<span class="fa fa-minus" aria-hidden="true"></span>');
+            return false;
+        }
+
+        function deleteForm(prefix, btn) {
+            var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+            if (total > 1) {
+                btn.closest('.form-row').remove();
+                var forms = $('.form-row');
+                $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+                for (var i = 0, formCount = forms.length; i < formCount; i++) {
+                    $(forms.get(i)).find(':input').each(function () {
+                        updateElementIndex(this, prefix, i);
+                    });
+                }
+            }
+            return false;
+        }
+
+        $(document).on('click', '.add-form-row', function (e) {
+            e.preventDefault();
+            cloneMore('.form-row:last', 'steps');
+            return false;
+        });
+        $(document).on('click', '.remove-form-row', function (e) {
+            e.preventDefault();
+            deleteForm('steps', $(this));
+            return false;
+        });
+    </script>
+{% endblock body %}

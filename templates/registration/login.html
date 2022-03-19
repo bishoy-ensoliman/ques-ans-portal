@@ -1,0 +1,49 @@
+{% extends 'questions/base_html.html' %}
+{% block title %}
+    Login
+{% endblock title %}
+{% load myfilters %}
+{% block body %}
+    <div class="w3-container w3-card w3-margin-top w3-mobile " style="max-width: 60em;  margin-left: auto;
+    margin-right: auto;">
+        {% if form.errors %}
+            <p class="w3-text-red">Your username and password didn't match. Please try again.</p>
+        {% endif %}
+        {% if not user.is_authenticated %}
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p>Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.</p>
+                {% else %}
+                    <p>Please login to see this page.</p>
+                {% endif %}
+            {% endif %}
+
+            <form class="w3-container w3-margin" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+
+                <div>
+                    <label for={{ form.username.id_for_label }}>{{ form.username.label_tag }}</label>
+                    {{ form.username|addclass:'w3-input' }}
+                </div>
+                <div>
+                    <label for = {{ form.password.id_for_label }}>{{ form.password.label_tag }}</label>
+                    {{ form.password|addclass:'w3-input' }}
+                </div>
+
+                <div class="w3-container w3-cell-row w3-margin-top">
+                    <input  class="w3-cell w3-btn w3-hover-navy" type="submit" value="login"/>
+                    <input type="hidden" name="next" value="{{ next }}"/>
+                    <p class="w3-right"><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                </div>
+            </form>
+
+            {# Assumes you setup the password_reset view in your URLconf #}
+
+        {% else %}
+            <p> you're already logged in</p>
+            {% if next %}<p><a href={{ next }}>{{ next }} return to previous page? </a></p>{% endif %}
+            <p><a href="{% url 'logout' %}">logout?</a></p>
+        {% endif %}
+    </div>
+{% endblock body %}
